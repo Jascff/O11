@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<base href= />
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="static/jquery.min.js"></script>
+		<script src="static/hls.min.js"></script>
+		<script src="static/o11.js"></script>
+		<link href="static/bootstrap.min.css" rel="stylesheet">
+		<link rel="icon" href="static/o11.ico" />
+
+		<style>
+			body {
+				background-color: black;
+				color: white;
+			}
+			a { color: white; }
+			* {
+				font-size: 12px;
+				line-height: 1.2;
+			}
+			#sdiv {
+				height:400pt;
+				overflow:auto
+			}
+		</style>
+	</head>
+	<body>
+		<div style="width: 100%; overflow:hidden;">
+			<div style="float: left; margin-left: 20px;">
+<pre>
+
+
+   ________  ____ ____
+   \_____  \/_   /_   |
+    /   |   \|   ||   |
+    /    |    \   ||   |
+    \_______  /___||___|
+      \/
+    <a href="//t.me/cracksmart">@cracksmart</a>
+    You can config o11 <i><a href="config">here</a></i>
+
+    Live stream and recording can be found at: http://ip:port/stream/name
+    HLS stream can be found at: http://ip:port/stream/name/[master,multi,fmp4].m3u8
+    VOD can be found at: http://ip:port/stream/name.mp4
+    <i><a href="playlist.m3u">Playlist</a></i> can be found at: http://ip:port/playlist.m3u
+</pre>
+			</div>
+			<div style="float: right; margin-right: 20px;">
+				<div class="row">
+					<div class="col-sm" style="padding: 40px;">
+						<img id="logo1" src="logo1.png" width="120" onerror="this.style.visibility = 'hidden'" />
+						<img id="logo2" src="logo2.png" width="120" onerror="this.style.visibility = 'hidden'" />
+						<br>
+						<img id="logo2" src="logo3.png" width="120" onerror="this.style.visibility = 'hidden'" />
+						<img id="logo4" src="logo4.png" width="120" onerror="this.style.visibility = 'hidden'" />
+					</div>
+					<div class="col-sm" style="padding: 20px;">
+						<video width="500" height="281" controls id="player"></video>
+						<br>
+						<select id="playerAudioSelect" >
+						</select>
+						<br>
+						<select id="playerSubtitlesSelect" >
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<form id="filterForm">
+			<div style='width: 350px;' class="input-group mb-3">
+				<span style='width: 70px;' class="input-group-text">FILTER</span>
+				<select style='text-align:center; vertical-align:middle; font-weight: bold' name="filter" id="filter" class="form-select">
+					<option value="">Select</option>
+					<option value="4k">4k</option>
+					<option value="1080p">1080p</option>
+					<option value="720p">720p</option>
+					<option value="sd">SD</option>
+					<option value="running">Running</option>
+					<option value="withkeys">With Keys</option>
+					<option value="withoutkeys">Without Keys</option>
+				</select>
+				<span style='width: 100px; font-weight: bold' class="input-group-text" id="currentFilter"></span>
+				<input type="submit" class="btn btn-primary btn-sm" id="deletefilter" value="X"/>
+			</div>
+		</form>
+
+		<div id="sdiv">
+		<table class="table table-dark table-bordered" border="1">
+			<tbody>
+			
+
+			</tbody>
+		</table>
+		</div>
+
+		<input type="hidden" id="tshls" value="true">
+		<input type="hidden" id="multitshls" value="true">
+		<input type="hidden" id="fmp4hls" value="true">
+		<input type="hidden" id="forcedFormat" value="">
+
+		
+		<br>
+		<br>
+		Active connections
+		<br>
+		<br>
+		In: 0.00Mb/s Out: 0.00Mb/s
+		<br>
+		<br>
+
+		<table border=="1">
+			<TR>
+				<TH>&nbsp;stream&nbsp;</TH>
+				<TH>&nbsp;type&nbsp;</TH>
+				<TH>&nbsp;user&nbsp;</TH>
+				<TH>&nbsp;client IP&nbsp;</TH>
+				<TH>&nbsp;uptime&nbsp;</TH>
+				<TH>&nbsp;bandwidth&nbsp;</TH>
+			</TR>
+			
+		</table>
+		
+
+		<script type="text/javascript">
+			window.onload = startInterval;
+
+			var url = new URL(window.location.href);
+			let params = new URLSearchParams(url.search);
+			document.getElementById('currentFilter').innerText = params.get('filter');
+
+			function filterOnChange() {
+				//location.reload();
+				var url = new URL(window.location.href);
+				var prefix = window.location.href.split('?')[0]
+				let params = new URLSearchParams(url.search);
+				params.delete('filter');
+				nofilterparams = params.toString()
+
+				if (nofilterparams != "") {
+					nofilterparams += "&"
+				} else {
+					nofilterparams += "?"
+				}
+
+				nofilterparams += "filter=" +  document.getElementById('filter').options[document.getElementById('filter').selectedIndex].value;
+				window.location.href = nofilterparams;
+			}
+			document.getElementById('filter').onchange = filterOnChange;
+
+			function filterDeleteOnClick() {
+				//location.reload();
+				var url = new URL(window.location.href);
+				let params = new URLSearchParams(url.search);
+				params.delete('filter');
+				window.location.href = params.toString();
+			}
+			document.getElementById('deletefilter').onclick = filterDeleteOnClick;
+
+			var intervalId = null;
+			function startInterval() {
+				document.getElementById('playerAudioSelect').style.display = 'none';
+				document.getElementById('playerSubtitlesSelect').style.display = 'none';
+			        if (!ImageExist("logo2.png") && !ImageExist("logo3.png") && !ImageExist("logo4.png")) {
+			                var yourImg = document.getElementById('logo1');
+			                if(yourImg && yourImg.style) {
+			                        yourImg.style.width = '200px';
+			                }
+			                for (i=2; i<=4; i++) {
+			                        var yourImg = document.getElementById('logo'+i);
+			                        if(yourImg && yourImg.style) {
+			                                    yourImg.style.height = '0px';
+			                                    yourImg.style.width = '0px';
+			                        }
+			                }
+				}
+				intervalId=setInterval("updateStreams();",1000);
+			}
+
+			var hls;
+
+			async function updateStreams() {
+				let response = await fetch(document.getElementsByTagName('base')[0].href + 'api/action', {
+					method: 'POST', // or 'PUT'
+					headers: {
+							'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ Action : "getstreams", Streams: [  { Id : "all", }, ] }),
+				});
+
+				let data = "";
+
+				if (!response.ok) {	
+					return
+				} else {
+					resp = await response.text();
+					if (resp == "") {
+						return;
+					}
+					data = JSON.parse(resp);
+					if (!data.Stream) {
+						return
+					}
+				}
+
+				data.Stream.forEach(function(item){
+					// Find index
+					let n = 0
+					let found = false
+					while (true) {
+						if (document.getElementById('id' + n) == null) {
+							break
+						}
+						if (document.getElementById('id' + n).value == item.Id) {
+							found = true
+							break
+						}
+
+						n++
+					}
+
+					if (found) {
+						if (item.Mode != "vod") {
+							document.getElementById('name' + n).onclick = setPlayer;
+							document.getElementById('name' + n).href = document.getElementsByTagName('base')[0].href + "stream/" + item.Id + "/master.m3u8";
+						} else {
+							document.getElementById('name' + n).href = document.getElementsByTagName('base')[0].href + "stream/" + item.Id + ".mp4";
+						}
+						document.getElementById('name' + n).style.color = item.NameColor;
+						document.getElementById('status' + n).textContent = item.Status;
+						document.getElementById('status' + n).style.color = item.StatusColor;
+						document.getElementById('status' + n).title = item.StreamInfo;
+						document.getElementById('bw' + n).textContent = item.Bw;
+						document.getElementById('bw' + n).style.color = item.BwColor;
+						if (item.CurrentVideo == '') {
+							document.getElementById('qualitylogo' + n).style.display = 'none';
+						} else if (item.CurrentVideo.includes("2160p")) {
+							document.getElementById('qualitylogo' + n).src = document.getElementsByTagName('base')[0].href + "static/4k.jpg";
+							document.getElementById('qualitylogo' + n).style.display = 'inline-block';
+						} else if (item.CurrentVideo.includes("1440p")) {
+							document.getElementById('qualitylogo' + n).src = document.getElementsByTagName('base')[0].href + "static/2k.jpg";
+							document.getElementById('qualitylogo' + n).style.display = 'inline-block';
+						} else if (item.CurrentVideo.includes("1080p")) {
+							document.getElementById('qualitylogo' + n).src = document.getElementsByTagName('base')[0].href + "static/1080p.jpg";
+							document.getElementById('qualitylogo' + n).style.display = 'inline-block';
+						} else if (item.CurrentVideo.includes("720p")) {
+							document.getElementById('qualitylogo' + n).src = document.getElementsByTagName('base')[0].href + "static/720p.jpg";
+							document.getElementById('qualitylogo' + n).style.display = 'inline-block';
+						} else  {
+							document.getElementById('qualitylogo' + n).src = document.getElementsByTagName('base')[0].href + "static/sd.jpg";
+							document.getElementById('qualitylogo' + n).style.display = 'inline-block';
+						}
+
+					}
+				});
+			}
+			updateStreams();
+		</script>
+	</body>
+</html>
+
+
